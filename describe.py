@@ -8,10 +8,12 @@ from grammar import parser
 grammar = open("description.grammar").read()
 desc = parser(grammar)
 
+
 @desc.function("word", str)
 def word(director, key):
     m = director.kwargs["mapgrid"]
     return "*" + m.lang.word(key) + "*"
+
 
 @desc.function("name", str)
 def name(director, key):
@@ -24,6 +26,7 @@ def direction(m, p1, p2):
     angle = int(4 * np.arctan2(y, x) / np.pi + 4.5) % 8
     return ["west", "south-west", "south", "south-east",
             "east", "north-east", "north", "north-west"][angle]
+
 
 def describe(m, city, last_city=None):
     paras = []
@@ -52,20 +55,24 @@ def describe(m, city, last_city=None):
     paras.extend(desc("description", **kwargs).split("\n"))
     return paras
 
+
 def mdize(name):
     name = re.sub('`', u'\u02bb', name)
     return name
 
+
 def get_map(directory, mode):
     try:
         m = terrain.load(directory + "/map.pickle")
-    except:
+    except Exception:
         m = terrain.MapGrid(mode=mode)
         m.save(directory + "/map.pickle")
     return m
 
+
 def draw_map(directory, m):
     m.plot(directory + "/map.png", dpi=200)
+
 
 def write_description(directory, m):
     with open(directory + "/map.md", "w") as f:
@@ -73,35 +80,38 @@ def write_description(directory, m):
         cities = m.ordered_cities()
         reg1 = m.region_names[cities[0]]
         reg2 = m.region_names[cities[-1]]
-        title = "%s to %s" % (reg1, reg2)
-        f.write("# %s\n\n" % mdize(title).encode("utf8"))
+        title = "{} to {}".format(reg1, reg2)
+        f.write("# {}\n\n".format(mdize(title).encode("utf8")))
         for city in cities:
             name = mdize(m.city_names[city])
-            f.write("## %s\n" % name.encode("utf8"))
+            f.write("## {}\n".format(name.encode("utf8")))
             for para in describe(m, city, last_city=last_city):
-                f.write("%s\n\n" % mdize(para).encode("utf8"))
+                f.write("{}\n\n".format(mdize(para).encode("utf8")))
             last_city = city
 
+
 def process_directory(directory, mode="shore"):
-    print "PROCESSING", directory, mode
+    print("PROCESSING", directory, mode)
     m = get_map(directory, mode)
     draw_map(directory, m)
     write_description(directory, m)
 
+
 def choose(lst, p):
     n = len(lst) - 1
-    return lst[sum(np.random.random() < p for _ in xrange(n))]
+    return lst[sum(np.random.random() < p for _ in range(n))]
+
 
 def do_novel(directory='tests/full', n=100):
     modes = ["shore", "island", "mountain", "desert"]
     last_mode = "shore"
-    for i in xrange(n):
+    for i in range(n):
         mode = choose(modes, i/(n-1.))
         if mode == last_mode:
             mapmode = mode
         else:
             mapmode = last_mode + "/" + mode
-        direc = "%s/%02d" % (directory, i)
+        direc = "{}/{}".format(directory, i)
         try:
             os.makedirs(direc)
         except:

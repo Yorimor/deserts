@@ -1,5 +1,5 @@
 import click
-import describe
+from . import describe
 import re
 import readline
 import sys
@@ -7,9 +7,11 @@ import traceback
 
 from collections import Counter
 
+
 @click.group()
 def cli():
     pass
+
 
 def print_defn(key, value=None, width=80):
     if value is None:
@@ -18,7 +20,7 @@ def print_defn(key, value=None, width=80):
     pretty = value.pretty(wrap=width - length)
     prefix = "%s = " % key
     for line in pretty:
-        print prefix + line
+        print(prefix + line)
         prefix = " " * length
 
 
@@ -49,20 +51,23 @@ def orphans():
 @cli.command()
 def graph():
     nodes, edges = get_graph()
-    parent_counts = Counter([x[1] for x in edges])    
-    
-    print """
+    parent_counts = Counter([x[1] for x in edges])
+
+    print("""
 digraph G {
     graph [rankdir="LR"];
-    """
+    """)
     for node in nodes:
-        print 'node_%s [label="%s", color="%s"];' % (node, node, "red" if
-                parent_counts[node] == 1 else "green")
+        rg = "green"
+        if parent_counts[node] == 1:
+            rg = "red"
+        print('node_{} [label="{}", color="{}"];'.format(node, node, rg))
+
     for parent, child in edges:
-        print "node_%s -> node_%s;" % (parent, child)
-    print """
+        print("node_{} -> node_{};".format(parent, child))
+    print("""
 }
-    """
+    """)
 
 @cli.command()
 def test():
@@ -82,8 +87,8 @@ def test():
             labels = [x for x in labels if txt in x]
             if state < len(labels):
                 return labels[state]
-        
-        cmd = raw_input("> ").split()
+
+        cmd = input("> ").split()
         name = cmd[0]
         repeats = 1
         if len(cmd) > 1:
@@ -91,16 +96,16 @@ def test():
         try:
             desc = describe.parser(open("description.grammar").read())
         except:
-            print "Parse error"
+            print("Parse error")
             continue
         desc.function("word")(lambda *args: "WORD")
         desc.function("name")(lambda *args: "NAME")
         try:
-            for _ in xrange(repeats):
-                print desc(name, **kwargs)
+            for _ in range(repeats):
+                print(desc(name, **kwargs))
         except:
             t, v, tb = sys.exc_info()
-            print "Runtime error", t, v
+            print("Runtime error", t, v)
             traceback.print_tb(tb)
             del tb
             continue
