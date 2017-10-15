@@ -29,6 +29,7 @@ def grammar():
     for key, value in sorted(describe.desc.lexicon.items()):
         print_defn(key, value)
 
+
 def get_graph():
     lex = describe.desc.lexicon
     nodes = sorted(lex.keys())
@@ -40,6 +41,7 @@ def get_graph():
                 edges.append((parent, child))
     return nodes, sorted(edges)
 
+
 @cli.command()
 def orphans():
     nodes, edges = get_graph()
@@ -47,6 +49,7 @@ def orphans():
     for node in nodes:
         if parent_counts[node] <= 1:
             print_defn(node)
+
 
 @cli.command()
 def graph():
@@ -69,17 +72,18 @@ digraph G {
 }
     """)
 
+
 @cli.command()
 def test():
     readline.parse_and_bind("tab: complete")
     desc = describe.desc
     kwargs = {
-            "city": "CITY",
-            "lastcity": "LASTCITY",
-            "direction": "DIRECTION",
-            "islandjourney": False,
-            "isseajourney": True
-            }
+        "city": "CITY",
+        "lastcity": "LASTCITY",
+        "direction": "DIRECTION",
+        "islandjourney": False,
+        "isseajourney": True
+    }
     while True:
         @readline.set_completer
         def completer(txt, state):
@@ -109,5 +113,7 @@ def test():
             traceback.print_tb(tb)
             del tb
             continue
+
+
 if __name__ == '__main__':
     cli()

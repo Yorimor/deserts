@@ -7,7 +7,10 @@ except ImportError:
     import language
 
 import numpy as np
+import os
 import matplotlib as mpl
+if os.environ.get("DISPLAY", "") == "":
+    mpl.use("Agg")
 import matplotlib.pyplot as plt
 import scipy.spatial as spl
 import scipy.sparse as spa
@@ -892,7 +895,7 @@ class MapGrid(object):
 if __name__ == '__main__':
     modes = ["shore", "island", "mountain", "desert"]
     for i in range(100):
-        mode = modes[i%4]
+        mode = modes[i % 4]
         plt.close('all')
         while True:
             print(mode, i)

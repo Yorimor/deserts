@@ -22,7 +22,7 @@ def name(director, key):
 
 
 def direction(m, p1, p2):
-    x, y = m.vxs[p2,:] - m.vxs[p1,:]
+    x, y = m.vxs[p2, :] - m.vxs[p1, :]
     angle = int(4 * np.arctan2(y, x) / np.pi + 4.5) % 8
     return ["west", "south-west", "south", "south-east",
             "east", "north-east", "north", "north-west"][angle]
@@ -37,8 +37,8 @@ def describe(m, city, last_city=None):
     sea = False
     if last_city is not None:
         direc = direction(m, city, last_city)
-        path,_ = m.shortest_path(last_city, city)
-        dist = terrain.distance(m.vxs[city,:], m.vxs[last_city,:])
+        path, _ = m.shortest_path(last_city, city)
+        dist = terrain.distance(m.vxs[city, :], m.vxs[last_city, :])
         far = bool(dist > 0.3)
         near = bool(dist < 0.15)
         land = bool(np.mean(m.elevation[path] > 0) > 0.4)
@@ -106,7 +106,7 @@ def do_novel(directory='tests/full', n=100):
     modes = ["shore", "island", "mountain", "desert"]
     last_mode = "shore"
     for i in range(n):
-        mode = choose(modes, i/(n-1.))
+        mode = choose(modes, i / (n - 1.))
         if mode == last_mode:
             mapmode = mode
         else:
@@ -118,4 +118,3 @@ def do_novel(directory='tests/full', n=100):
             pass
         process_directory(direc, mode=mapmode)
         last_mode = mode
-
